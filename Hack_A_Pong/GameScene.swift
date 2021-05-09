@@ -144,43 +144,24 @@ class GameScene: SKScene {
             return
         }
         
-        var timeDelta = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
-        
-        // throttle
-//        if timeDelta * 1000 < 1 {
-//            return;
-//        }
-        
+        let timeDelta = currentTime - lastUpdateTime
         checkForScore()
         
         let movementSpeed = 100
         
         if let paddleRight = self.paddleRight {
-            
-//            let updateSpeed = currentTime
-//            let updateValue = Int(updateSpeed / 1000) / movementSpeed
             if let ball = self.ball {
                 let isAbove = ball.position.y > paddleRight.position.y
                 let xPos = paddleRight.position.x
+                
                 let deltaDiff = timeDelta * Double(movementSpeed)
                 let yPos = isAbove
                     ? paddleRight.position.y + CGFloat(deltaDiff)
                     : paddleRight.position.y - CGFloat(deltaDiff)
                 
-                       
-               // let newPoint = CGPoint(x: paddleRight.position.x, y: paddleRight.position.y + 4)
-                
                 paddleRight.position = CGPoint(x: xPos, y: yPos)
-//
-                   
-//                    let tooSlow = Int(arc4random_uniform(UInt32(2)))
-//                    if tooSlow < 1 {
-//                        paddleRight.position = CGPoint(x: paddleRight.position.x, y: ball?.position.y ?? 0)
-//           }
             }
-        
         }
-        
     }
 }
