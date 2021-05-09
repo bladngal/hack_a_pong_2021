@@ -97,16 +97,11 @@ class GameScene: SKScene {
     }
     
     
-    // doesn't work yet
     func spawnBall() {
-        //self.ball = self.childNode(withName: "//ball") as? SKSpriteNode
-        if let ball = self.childNode(withName: "//ball") as? SKSpriteNode {
-            ball.position = CGPoint(x: frame.midX, y: frame.midY)
-            ball.physicsBody?.velocity = CGVector(dx: 700.0, dy: 400.0)
-            
-            //self.ball = ball
-            addChild(ball)
-        }
+        print("in spawnBall()")
+        
+        ball?.position = CGPoint(x: frame.midX, y: frame.midY)
+        ball?.physicsBody?.velocity = CGVector(dx: -300.0, dy: 400.0)
         
     }
     
@@ -115,26 +110,24 @@ class GameScene: SKScene {
         if let paddleLeft = self.paddleLeft {
             if let paddleRight = self.paddleRight {
                 if let screenPosition = ball?.position.x {
-                    let leftEdgePosition = paddleLeft.position.x - 20
-                    let rightEdgePosition = paddleRight.position.x + 20
+                    let leftEdgePosition = paddleLeft.position.x - 30
+                    let rightEdgePosition = paddleRight.position.x + 30
                 
                     print("screenPosition: \(screenPosition)")
                     
                     if screenPosition < leftEdgePosition {
                         rightScore += 1
-                        //rightScore = 6
-                        print("rightScore: \(rightScore)")
                         updateRightScore()
-                        //scoreRight?.text = "\(rightScore)"
-                        ball?.removeFromParent()
-                        ball = nil
+                        //ball?.removeFromParent()
+                        //ball = nil
                         spawnBall()
                     
                     } else if screenPosition > rightEdgePosition {
                         leftScore += 1
                         updateLeftScore()
-                        ball?.removeFromParent()
-                        ball = nil
+                        //ball?.removeFromParent()
+                        //ball = nil
+                        spawnBall()
                     }
                 }
             }
