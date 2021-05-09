@@ -18,6 +18,7 @@ class GameScene: SKScene {
     private var scoreRight : SKLabelNode?
     var leftScore = 0
     var rightScore = 0
+    var lastUpdateTime: Double = 0
     
     
     override func didMove(to view: SKView) {
@@ -85,6 +86,7 @@ class GameScene: SKScene {
             let touchPosition = firstTouch?.location(in: self)
             
             self.paddleLeft?.position = CGPoint(x: CGFloat(self.paddleLeft?.position.x ?? 0), y: CGFloat(touchPosition?.y ?? 0))
+            
         }
     }
     
@@ -98,22 +100,22 @@ class GameScene: SKScene {
     
     
     func spawnBall() {
-        print("in spawnBall()")
+        //print("in spawnBall()")
         
         ball?.position = CGPoint(x: frame.midX, y: frame.midY)
-        ball?.physicsBody?.velocity = CGVector(dx: -300.0, dy: 400.0)
+        ball?.physicsBody?.velocity = CGVector(dx: -700.0, dy: 400.0)
         
     }
     
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+    func checkForScore() {
+        let marginToWin = CGFloat(360)
         if let paddleLeft = self.paddleLeft {
             if let paddleRight = self.paddleRight {
                 if let screenPosition = ball?.position.x {
-                    let leftEdgePosition = paddleLeft.position.x - 30
-                    let rightEdgePosition = paddleRight.position.x + 30
+                    let leftEdgePosition = paddleLeft.position.x - marginToWin
+                    let rightEdgePosition = paddleRight.position.x + marginToWin
                 
-                    print("screenPosition: \(screenPosition)")
+                   // print("screenPosition: \(screenPosition)")
                     
                     if screenPosition < leftEdgePosition {
                         rightScore += 1
@@ -132,8 +134,53 @@ class GameScene: SKScene {
                 }
             }
         }
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        // Called before each frame is rendered
         
+        if lastUpdateTime == 0 {
+            lastUpdateTime = currentTime
+            return
+        }
+        
+        var timeDelta = currentTime - lastUpdateTime
+        lastUpdateTime = currentTime
+        
+        // throttle
+//        if timeDelta * 1000 < 1 {
+//            return;
+//        }
+        
+        checkForScore()
+        
+        let movementSpeed = 100
+        
+        if let paddleRight = self.paddleRight {
             
+//            let updateSpeed = currentTime
+//            let updateValue = Int(updateSpeed / 1000) / movementSpeed
+            if let ball = self.ball {
+                let isAbove = ball.position.y > paddleRight.position.y
+                let xPos = paddleRight.position.x
+                let deltaDiff = timeDelta * Double(movementSpeed)
+                let yPos = isAbove
+                    ? paddleRight.position.y + CGFloat(deltaDiff)
+                    : paddleRight.position.y - CGFloat(deltaDiff)
+                
+                       
+               // let newPoint = CGPoint(x: paddleRight.position.x, y: paddleRight.position.y + 4)
+                
+                paddleRight.position = CGPoint(x: xPos, y: yPos)
+//
+                   
+//                    let tooSlow = Int(arc4random_uniform(UInt32(2)))
+//                    if tooSlow < 1 {
+//                        paddleRight.position = CGPoint(x: paddleRight.position.x, y: ball?.position.y ?? 0)
+//           }
+            }
+        
+        }
         
     }
 }
