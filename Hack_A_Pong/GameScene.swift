@@ -14,26 +14,36 @@ class GameScene: SKScene {
     private var paddleRight : SKSpriteNode?
     private var ball: SKSpriteNode?
     private var spinnyNode: SKShapeNode?
-    var score = 0
+    private var scoreLeft : SKLabelNode?
+    private var scoreRight : SKLabelNode?
+    var leftScore = 0
+    var rightScore = 0
+    
     
     override func didMove(to view: SKView) {
         
         // Get nodes from scene and store it for use later
         self.paddleLeft = self.childNode(withName: "//paddleLeft") as? SKSpriteNode
         self.paddleRight = self.childNode(withName: "//paddleRight") as? SKSpriteNode
+        self.scoreLeft = self.childNode(withName: "//scoreLeft") as? SKLabelNode
+        self.scoreRight = self.childNode(withName: "//scoreRight") as? SKLabelNode
+        
         self.ball = self.childNode(withName: "//ball") as? SKSpriteNode
-        
-//        let ball = SKSpriteNode(texture: SKTexture(imageNamed: "yarnBall"), size: CGSize(width: 40, height: 40))
-//        ball.position = CGPoint(x: frame.midX, y: frame.midY)
-//        ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width/2)
-//        addChild(ball)
-        
         if let ball = self.ball {
-            ball.physicsBody?.velocity = CGVector(dx: 700.0, dy: 400.0)
+            ball.physicsBody?.velocity = CGVector(dx: -700.0, dy: 400.0)
             
         }
-        
-      
+
+    }
+    
+    
+    func updateLeftScore() {
+        scoreLeft?.text = "\(leftScore)"
+    }
+    
+    func updateRightScore() {
+        print("in updateRightScore()")
+        scoreRight?.text = "\(rightScore)"
     }
     
     
@@ -87,7 +97,50 @@ class GameScene: SKScene {
     }
     
     
+    // doesn't work yet
+    func spawnBall() {
+        //self.ball = self.childNode(withName: "//ball") as? SKSpriteNode
+        if let ball = self.childNode(withName: "//ball") as? SKSpriteNode {
+            ball.position = CGPoint(x: frame.midX, y: frame.midY)
+            ball.physicsBody?.velocity = CGVector(dx: 700.0, dy: 400.0)
+            
+            //self.ball = ball
+            addChild(ball)
+        }
+        
+    }
+    
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+        if let paddleLeft = self.paddleLeft {
+            if let paddleRight = self.paddleRight {
+                if let screenPosition = ball?.position.x {
+                    let leftEdgePosition = paddleLeft.position.x - 20
+                    let rightEdgePosition = paddleRight.position.x + 20
+                
+                    print("screenPosition: \(screenPosition)")
+                    
+                    if screenPosition < leftEdgePosition {
+                        rightScore += 1
+                        //rightScore = 6
+                        print("rightScore: \(rightScore)")
+                        updateRightScore()
+                        //scoreRight?.text = "\(rightScore)"
+                        ball?.removeFromParent()
+                        ball = nil
+                        spawnBall()
+                    
+                    } else if screenPosition > rightEdgePosition {
+                        leftScore += 1
+                        updateLeftScore()
+                        ball?.removeFromParent()
+                        ball = nil
+                    }
+                }
+            }
+        }
+        
+            
+        
     }
 }
